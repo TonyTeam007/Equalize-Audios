@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
+// import 'package:firebase_core/firebase_core.dart';
 
 class playPage extends StatefulWidget {
   final String songUrl;
@@ -7,6 +10,19 @@ class playPage extends StatefulWidget {
 
   @override
   playPageState createState() => playPageState();
+}
+
+AudioPlayer audioPlayer = AudioPlayer();
+
+Future<void> playMusicFromAsset() async {
+  int result = await audioPlayer
+      .play('assets/Music_Storage/LE SSERAFIM/UNFORGIVEN.m4a', isLocal: true);
+
+  if (result == 1) {
+    // สามารถเล่นเพลงได้
+  } else {
+    // เกิดข้อผิดพลาดในการเล่นเพลง
+  }
 }
 
 class playPageState extends State<playPage> {
