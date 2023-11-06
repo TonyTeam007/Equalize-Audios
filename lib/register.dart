@@ -23,8 +23,9 @@ class _registerPageState extends State<registerPage> {
   Future<int> register() async {
     try {
       await Auth().createUser(
+        name: _controllerName.text,
         email: _controllerEmail.text,
-        password: _controllerPassword.text
+        password: _controllerPassword.text,
       );
     } on FirebaseAuthException catch (e) {
       if(_controllerName.text == "" || _controllerEmail.text == "" || _controllerPassword.text == "" || _controllerConfirmPassword.text == "") {
