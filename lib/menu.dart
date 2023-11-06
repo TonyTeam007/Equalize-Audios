@@ -1,89 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:projectmusic/auth.dart';
 import 'package:projectmusic/list.dart';
+import 'package:projectmusic/main.dart';
 
 class menuPage extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Playlist'),
+        title: Text(MyApp.nameUser ?? "Create Playlist"),
         backgroundColor: Colors.amber,
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromARGB(255, 149, 0, 199), // สีม่วงที่คุณต้องการ
-              Colors.black, // สีดำ
-            ],
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
+      body: FutureBuilder(
+        future: Auth().getPlaylist(),
+        builder: (context, snapshot) {
+          if(snapshot.hasData){
+            return Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color.fromARGB(255, 149, 0, 199), // สีม่วงที่คุณต้องการ
+                    Colors.black, // สีดำ
+                  ],
+                ),
+              ),
+              child: Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.star),
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Play List",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 36.0,
-                                fontWeight: FontWeight.w600,
+                    Container(
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.star),
+                                    color: Colors.white,
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Play List",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 36.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Container(
+                        child: Column(
+                          children: <Widget>[...(snapshot.data?.map((e) => playlist()) ?? []).toList(),]
                         ),
-                      ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => listPage(),
+                        ));
+                      },
+                      child: Text('Create Playlist'),
                     ),
                   ],
                 ),
               ),
-              Flexible(
-                child: Container(
-                  child: Column(
-                    children: [
-                      playlist(),
-                      playlist(),
-                      playlist(),
-                      playlist(),
-                      playlist(),
-                      playlist(),
-                    ],
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => listPage(),
-                  ));
-                },
-                child: Text('Create Playlist'),
-              ),
-            ],
-          ),
-        ),
-      ),
+            );
+          } else {
+            return Center(child: CircularProgressIndicator(),);
+          }
+        },
+      )
     );
   }
 }

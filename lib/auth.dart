@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:projectmusic/list.dart';
+import 'package:projectmusic/main.dart';
 
 class Auth {
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   final CollectionReference users = FirebaseFirestore.instance.collection("users");
-
-  String? nameUser = "";
+  final CollectionReference playlists = FirebaseFirestore.instance.collection("playlists");
+  final CollectionReference musics = FirebaseFirestore.instance.collection("musics");
 
   User? get currentUser => _firebaseAuth.currentUser;
 
@@ -22,8 +24,9 @@ class Auth {
       .then((QuerySnapshot querySnapshot) {
     if (querySnapshot.docs.isNotEmpty) {
       // If a document with the specified email is found, retrieve the name
-      nameUser = querySnapshot.docs[0]['name'];
-      print('Name: $nameUser');
+      MyApp.nameUser = querySnapshot.docs[0]['name'];
+      MyApp.emailUser = querySnapshot.docs[0]['email'];
+      print('Name: '+MyApp.nameUser);
     } else {
       // Handle the case when no matching document is found
       print('No user found with the specified email');
@@ -43,6 +46,26 @@ class Auth {
           })
           .then((value) => print("User Added"))
           .catchError((error) => print("Failed to add user: $error"));
+  }
+
+  Future<List<QueryDocumentSnapshot>> getPlaylist() async {
+    QuerySnapshot querySnapshot = await playlists.where('own_user', isEqualTo: MyApp.emailUser).get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs;
+    } else {
+      return List.empty();
+    }
+  }
+  
+  Future<List<QueryDocumentSnapshot>> getMusics() async {
+    QuerySnapshot querySnapshot = await musics.get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs;
+    } else {
+      return List.empty();
+    }
   }
 
   Future<void> signOut() async {
