@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projectmusic/auth.dart';
 import 'package:projectmusic/play.dart';
 
 class listPage extends StatelessWidget {
@@ -41,97 +42,106 @@ class list extends StatelessWidget {
             ],
           ),
         ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  suffixIcon: Icon(Icons.search),
-                  filled: true,
-                  fillColor: Color.fromARGB(146, 175, 37, 209),
-                  hintText: 'ค้นหาเพลง',
-                  hintStyle:
-                      TextStyle(color: Color.fromARGB(122, 255, 255, 255)),
-                  contentPadding:
-                      EdgeInsets.all(16.0), // ระยะห่างขอบของ TextField
-                  border: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(25.0)), // กำหนดมุมมน
+        child: FutureBuilder(
+          future: Auth().getMusics(),
+          builder: (context, snapshot) {
+            if(snapshot.hasData){
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.search),
+                        filled: true,
+                        fillColor: Color.fromARGB(146, 175, 37, 209),
+                        hintText: 'ค้นหาเพลง',
+                        hintStyle:
+                            TextStyle(color: Color.fromARGB(122, 255, 255, 255)),
+                        contentPadding:
+                            EdgeInsets.all(16.0), // ระยะห่างขอบของ TextField
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(25.0)), // กำหนดมุมมน
+                        ),
+                      ),
+                      onSubmitted: (value) {
+                        // รับค่าข้อความค้นหา
+                        print(value);
+                      },
+                    ),
                   ),
-                ),
-                onSubmitted: (value) {
-                  // รับค่าข้อความค้นหา
-                  print(value);
-                },
-              ),
-            ),
-            Text(
-              "My NewJeans",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 36.0,
-              ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                itemCount: songs.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    color: const Color.fromARGB(0, 255, 193, 7),
-                    child: ListTile(
-                      title: Text(
-                        songs[index],
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      subtitle: Text(
-                        "Album",
-                        style: TextStyle(
-                          color: const Color.fromARGB(167, 255, 255, 255),
-                          fontSize: 12.0,
-                        ),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.star,
-                                color: Color.fromARGB(127, 255, 255,
-                                    255)), // เปลี่ยน Icon ให้เป็น "star"
-                            onPressed: () {
-                              // รหัสเมื่อคลิกที่ "star" icon
+                  Text(
+                    "My NewJeans",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 36.0,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                      itemCount: snapshot.data?.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          color: const Color.fromARGB(0, 255, 193, 7),
+                          child: ListTile(
+                            title: Text(
+                              snapshot.data?[index]['name'],
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            subtitle: Text(
+                              snapshot.data?[index]['band'],
+                              style: TextStyle(
+                                color: const Color.fromARGB(167, 255, 255, 255),
+                                fontSize: 12.0,
+                              ),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.star,
+                                      color: Color.fromARGB(127, 255, 255,
+                                          255)), // เปลี่ยน Icon ให้เป็น "star"
+                                  onPressed: () {
+                                    // รหัสเมื่อคลิกที่ "star" icon
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete,
+                                      color: const Color.fromARGB(127, 255, 255,
+                                          255)), // เปลี่ยน Icon ให้เป็น "delete"
+                                  onPressed: () {
+                                    // รหัสเมื่อคลิกที่ "delete" icon
+                                  },
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => playPage(
+                                      "https://www.youtube.com/watch?v=sVTy_wmn5SU"),
+                                ),
+                              );
                             },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete,
-                                color: const Color.fromARGB(127, 255, 255,
-                                    255)), // เปลี่ยน Icon ให้เป็น "delete"
-                            onPressed: () {
-                              // รหัสเมื่อคลิกที่ "delete" icon
-                            },
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => playPage(
-                                "https://www.youtube.com/watch?v=sVTy_wmn5SU"),
                           ),
                         );
                       },
                     ),
-                  );
-                },
-              ),
-            ),
-          ],
+                  ),
+                ],
+              );
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
         ),
       ),
     );
