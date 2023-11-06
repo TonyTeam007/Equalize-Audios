@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "643571912675",
+    "project_id": "equalized-audio",
+    "storage_bucket": "equalized-audio.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643571912675:android:74045bdcebc4ceadb61ad6",
+        "android_client_info": {
+          "package_name": "com.example.projectmusic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuGe4APaqqPlGUWnEWHXcg2wHI4p8Fd9U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

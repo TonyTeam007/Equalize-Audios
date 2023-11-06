@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:projectmusic/auth.dart';
 import 'package:projectmusic/main.dart';
 
 class registerPage extends StatefulWidget {
@@ -12,23 +13,33 @@ class registerPage extends StatefulWidget {
 
 class _registerPageState extends State<registerPage> {
 
+    String? errorMessage = '';
+  
+  final TextEditingController _controllerName = TextEditingController();
+  final TextEditingController _controllerEmail = TextEditingController();
+  final TextEditingController _controllerPassword = TextEditingController();
+  final TextEditingController _controllerConfirmPassword = TextEditingController();
+
   Future<int> register() async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: "barry.allen@example.com",
-        password: "SuperSecretPassword!"
+      await Auth().createUser(
+        email: _controllerEmail.text,
+        password: _controllerPassword.text
       );
     } on FirebaseAuthException catch (e) {
+      if(_controllerName.text == "" || _controllerEmail.text == "" || _controllerPassword.text == "" || _controllerConfirmPassword.text == "") {
+        return 1;
+      }
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
-        return 1;
+        return 2;
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
-        return 2;
+        return 3;
       }
     } catch (e) {
       print(e);
-      return 3;
+      return -1;
     }
 
     return 0;
@@ -70,6 +81,7 @@ class _registerPageState extends State<registerPage> {
               SizedBox(
                 width: 275,
                 child: TextField(
+                  controller: _controllerName,
                   decoration: InputDecoration(
                     labelText: 'Name',
                     labelStyle: TextStyle(
@@ -98,6 +110,7 @@ class _registerPageState extends State<registerPage> {
               SizedBox(
                 width: 275,
                 child: TextField(
+                  controller: _controllerEmail,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(
@@ -126,6 +139,7 @@ class _registerPageState extends State<registerPage> {
               SizedBox(
                 width: 275,
                 child: TextField(
+                  controller: _controllerPassword,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -155,6 +169,7 @@ class _registerPageState extends State<registerPage> {
               SizedBox(
                 width: 275,
                 child: TextField(
+                  controller: _controllerConfirmPassword,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
@@ -193,11 +208,11 @@ class _registerPageState extends State<registerPage> {
                         barrierDismissible: false, // user must tap button!
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: const Text('AlertDialog Title'),
+                            title: const Text('Empty Input'),
                             content: const SingleChildScrollView(
                               child: ListBody(
                                 children: <Widget>[
-                                  Text('The password provided is too weak.'),
+                                  Text('Insert every Input box.'),
                                 ],
                               ),
                             ),

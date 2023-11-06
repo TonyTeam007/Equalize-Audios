@@ -1,9 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 import 'package:flutter/material.dart';
+import 'package:projectmusic/auth.dart';
 import 'package:projectmusic/list.dart';
 import 'package:projectmusic/menu.dart';
 import 'package:projectmusic/register.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -33,6 +40,30 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+    String? errorMessage = '';
+  bool isLogin = false;
+  
+  final TextEditingController _controllerEmail = TextEditingController();
+  final TextEditingController _controllerPassword = TextEditingController();
+
+  Future<void> signInWithEmailAndPass() async {
+    try {
+      await Auth().signInWithEmailAndPass(email: _controllerEmail.text, password: _controllerPassword.text);
+      setState(() {
+        isLogin = true;
+      });
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => menuPage(),
+        ),
+      );
+    } on FirebaseAuthException catch (e){
+      setState(() {
+        errorMessage = e.message;
+      });
+    }
+  }
+
   final pages = {
     listPage(),
   };
@@ -65,6 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
               SizedBox(
                 width: 275,
                 child: TextField(
+                  controller: _controllerEmail,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(
@@ -93,6 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
               SizedBox(
                 width: 275,
                 child: TextField(
+                  controller: _controllerPassword,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -117,6 +150,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               SizedBox(height: 20.0),
+              Text(
+                errorMessage ?? "",
+                style: TextStyle(
+                    fontSize: 12.0,
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontWeight: FontWeight.w600),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -135,11 +175,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => menuPage(),
-                        ),
-                      );
+                      setState(() {
+                        errorMessage = "";
+                      });
+                      signInWithEmailAndPass();
                     },
                     child: Text('Login'),
                   ),
